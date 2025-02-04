@@ -79,8 +79,9 @@ public class GameManager : MonoBehaviour
             if (dircetion == Vector3.down)
             {
                 GetComponent<GridScript>().UpdateGrid(CurrentTEt.transform);
-                CheckForLines();
+                
                 BlockSet();
+                CheckForLines();
                 SpawnTetrimino();
                 
 
@@ -97,14 +98,14 @@ public class GameManager : MonoBehaviour
         int blocksize = 4;
         if (CurrentTEt.name == "Stairs")
         {
-            blocksize = 7;
+            blocksize = 8;
         }
         GameObject[] block = new GameObject[blocksize];
 
         for (int i = 0; i < blocksize; i++)
         {
             
-            Debug.Log(CurrentTEt.name);
+            
             block[i] = CurrentTEt.transform.GetChild(i).gameObject;
 
 
@@ -118,6 +119,7 @@ public class GameManager : MonoBehaviour
 
             grid[x,y] = newBlock;
         }
+        Destroy(CurrentTEt);
         
 
     }
@@ -138,9 +140,12 @@ public class GameManager : MonoBehaviour
         {
             if (grid[x, y] == null)
             {
+                Debug.Log("eau");
                 return false; //full row
+                
             }
         }
+        Debug.Log("nonfl");
         return true; //not full
     }
     void ClearLine(int y)
