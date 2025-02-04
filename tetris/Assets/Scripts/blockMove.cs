@@ -1,16 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class GridScript : MonoBehaviour
 {
     public Transform[,] grid;
     public int width, height;
+    public GameManager managerScript;
 
     // Start is called before the first frame update
     void Start()
     {
         grid = new Transform[width, height];
+        managerScript = gameObject.GetComponent<GameManager>();
     }
 
     public void UpdateGrid(Transform tetrimino)
@@ -33,7 +36,11 @@ public class GridScript : MonoBehaviour
             Vector2 pos = Round(mino.position);
             if (pos.y < height)
             {
-                grid[(int)pos.x, (int)pos.y] = mino;
+                //grid[(int)pos.x, (int)pos.y] = mino;
+                int xp = (int)math.round(pos.x);
+                int yp = (int)math.round(pos.y);
+                grid[(int)pos.x, (int)pos.y] = managerScript.grid[xp,yp].transform;
+
             }
         }
     }

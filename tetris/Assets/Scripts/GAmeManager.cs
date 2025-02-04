@@ -78,9 +78,10 @@ public class GameManager : MonoBehaviour
             CurrentTEt.transform.position -= dircetion;
             if (dircetion == Vector3.down)
             {
+                BlockSet();
                 GetComponent<GridScript>().UpdateGrid(CurrentTEt.transform);
                 
-                BlockSet();
+                
                 CheckForLines();
                 SpawnTetrimino();
                 
@@ -120,7 +121,7 @@ public class GameManager : MonoBehaviour
             grid[x,y] = newBlock;
         }
         Destroy(CurrentTEt);
-        
+
 
     }
     void CheckForLines()
