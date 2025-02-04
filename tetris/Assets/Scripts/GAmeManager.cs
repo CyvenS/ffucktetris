@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
@@ -8,10 +9,16 @@ public class GameManager : MonoBehaviour
     public GameObject[] Tetriminos;
     public float MoveFre = 0.8f;
     private float passedTime = 0;
-    private GameObject CurrentTEt;
+    int height = 20;
+    int width = 10;
+
+    public GameObject CurrentTEt;
+    public GameObject blockPrefab;
+    public GameObject[,] grid;
     // Start is called before the first frame update
     void Start()
     {
+        grid = new GameObject[width,height];
         SpawnTetrimino();
     }
 
@@ -59,7 +66,7 @@ public class GameManager : MonoBehaviour
     }
     void SpawnTetrimino()
     {
-        int index = Random.Range(0, Tetriminos.Length);
+        int index = UnityEngine.Random.Range(0, Tetriminos.Length);
         CurrentTEt = Instantiate(Tetriminos[index], new Vector3(5, 19, 0), Quaternion.identity);
     }
 
@@ -74,6 +81,7 @@ public class GameManager : MonoBehaviour
                 GetComponent<GridScript>().UpdateGrid(CurrentTEt.transform);
                 CheckForLines();
                 SpawnTetrimino();
+                BlockSet(CurrentTEt);
 
             }
         }
@@ -82,8 +90,76 @@ public class GameManager : MonoBehaviour
     {
         return GetComponent<GridScript>().IsValidPosition(CurrentTEt.transform);
     }
+
+    void BlockSet(GameObject CurrentTEt)
+    {
+        int blocksize = 4;
+        if (CurrentTEt.name == "Stairs")
+        {
+            blocksize = 8;
+        }
+        GameObject[] block = null;
+
+        for (int i = 0; i < blocksize; i++)
+        {
+
+            block[i] = CurrentTEt.transform.GetChild(i).gameObject;
+            Vector3 pos;
+            pos = new Vector3(block[i].transform.position.x, block[i].transform.position.y, block[i].transform.position.z);
+            GameObject newBlock = Instantiate(blockPrefab, pos, Quaternion.identity);
+            newBlock.GetComponent<SpriteRenderer>().color = block[i].GetComponent<SpriteRenderer>().color;
+
+            int x = (int)Math.Round(block[i].transform.position.x);
+            int y = (int)Math.Round(block[i].transform.position.y);
+
+            grid[x,y] = newBlock;
+        }
+        Destroy(CurrentTEt);
+
+    }
     void CheckForLines()
     {
+        for (int y = 0; y < height; y++)
+        {
+            if (IsLineFull(y))
+            {
+                ClearLine(y);
+                ShiftRowsDown(y);
+            }
+        }
+    }
+    bool IsLineFull(int y)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            if (grid[x, y] == null)
+            {
+                return false; //full row
+            }
+        }
+        return true; //not full
+    }
+    void ClearLine(int y)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            Destroy(grid[x, y].gameObject);
+        }
+    }
+    void ShiftRowsDown(int clearRow)
+    {
+        for (int y = clearRow; y < height - 1; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                grid[x, y] = grid[x, y + 1];
+                if (grid[x, y] != null)
+                {
+                    grid[x, y].transform.position += Vector3.down;
+                }
+                grid[x, y + 1] = null;
+            }
+        }
 
     }
 }
