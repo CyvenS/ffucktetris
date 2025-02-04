@@ -80,8 +80,9 @@ public class GameManager : MonoBehaviour
             {
                 GetComponent<GridScript>().UpdateGrid(CurrentTEt.transform);
                 CheckForLines();
+                BlockSet();
                 SpawnTetrimino();
-                BlockSet(CurrentTEt);
+                
 
             }
         }
@@ -91,19 +92,22 @@ public class GameManager : MonoBehaviour
         return GetComponent<GridScript>().IsValidPosition(CurrentTEt.transform);
     }
 
-    void BlockSet(GameObject CurrentTEt)
+    void BlockSet()
     {
         int blocksize = 4;
         if (CurrentTEt.name == "Stairs")
         {
-            blocksize = 8;
+            blocksize = 7;
         }
-        GameObject[] block = null;
+        GameObject[] block = new GameObject[blocksize];
 
         for (int i = 0; i < blocksize; i++)
         {
-
+            
+            Debug.Log(CurrentTEt.name);
             block[i] = CurrentTEt.transform.GetChild(i).gameObject;
+
+
             Vector3 pos;
             pos = new Vector3(block[i].transform.position.x, block[i].transform.position.y, block[i].transform.position.z);
             GameObject newBlock = Instantiate(blockPrefab, pos, Quaternion.identity);
@@ -114,7 +118,7 @@ public class GameManager : MonoBehaviour
 
             grid[x,y] = newBlock;
         }
-        Destroy(CurrentTEt);
+        
 
     }
     void CheckForLines()
