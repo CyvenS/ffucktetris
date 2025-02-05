@@ -89,6 +89,9 @@ public class GameManager : MonoBehaviour
                 
                 
                 CheckForLines();
+                CheckForLines();
+                CheckForLines();
+                CheckForLines();
                 SpawnTetrimino();
                 
 
