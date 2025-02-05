@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.Tilemaps;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,9 +17,13 @@ public class GameManager : MonoBehaviour
     public GameObject CurrentTEt;
     public GameObject blockPrefab;
     public GameObject[,] grid;
+
+    public GridScript gridScrip;
+
     // Start is called before the first frame update
     void Start()
     {
+        gridScrip = gameObject.GetComponent<GridScript>();
         grid = new GameObject[width,height];
         SpawnTetrimino();
     }
@@ -56,7 +62,7 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
-            MoveFre = 0.4f;
+            MoveFre = 0.2f;
 
         }
         else
@@ -154,6 +160,7 @@ public class GameManager : MonoBehaviour
         for (int x = 0; x < width; x++)
         {
             Destroy(grid[x, y].gameObject);
+            gridScrip.grid[x, y] = null;
         }
     }
     void ShiftRowsDown(int clearRow)
@@ -168,6 +175,15 @@ public class GameManager : MonoBehaviour
                     grid[x, y].transform.position += Vector3.down;
                 }
                 grid[x, y + 1] = null;
+
+                
+
+                gridScrip.grid[x, y] = gridScrip.grid[x, y + 1];
+                if (gridScrip.grid[x, y] != null)
+                {
+                    //gridScrip.grid[x, y].transform.position += Vector3.down;
+                }
+                gridScrip.grid[x, y + 1] = null;
             }
         }
 
